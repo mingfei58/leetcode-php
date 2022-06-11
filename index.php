@@ -247,27 +247,37 @@ class StaticLink
 }
 
 
-$table = new StaticLink(5);
+//$table = new StaticLink(5);
+////$table->listBackUpLink();
+//$table->insert("a");
+//$table->insert("b");
+//$table->insert("c");
+//$table->insert("d");
+//$table->insert("e");
+////$table->insert("f");
+//$table->listSequenceLink();
 //$table->listBackUpLink();
-$table->insert("a");
-$table->insert("b");
-$table->insert("c");
-$table->insert("d");
-$table->insert("e");
-//$table->insert("f");
-$table->listSequenceLink();
-$table->listBackUpLink();
-$table->list();
-$table->update("c","c1");
-$table->list();
-$table->delete("c1");
-$table->list();
-$table->find("a");
-var_dump($table->currentNode);
-
-
-
-
+//$table->list();
+//$table->update("c","c1");
+//$table->list();
+//$table->delete("c1");
+//$table->list();
+//$table->find("a");
+//var_dump($table->currentNode);
+ini_set("display_errors",1);
+//include "协程/UseYield.php";
+//include "协程/Task.php";
+//include "协程/Scheduler.php";
+//include "协程/SystemCall.php";
+//include "协程/KillTask.php";
+//include "协程/Socket.php";
+$arr[2] = 'huixinchen';
+$arr[1]  = 2007;
+$arr[0]  = 2008;
+foreach ($arr as $key => $val) {
+//结果是什么?
+    var_dump($val);
+}
 //跳跃表
 
 //节点元素之间具有'一对一'的逻辑关系且有序排列，节点之间的逻辑关系通过在每个节点中维持多个指向其他节点的指针，从而达到快速访问节点的目的
