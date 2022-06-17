@@ -5,6 +5,8 @@
 //https://www.modb.pro/db/72128
 //https://www.edrawmax.cn/online/zh/workbench
 //https://www.cnblogs.com/dongry/p/10210609.html
+
+require_once "高级工程师面试题.php";
 //数据结构
 
 //存储具有复杂关系的数据方便于后期对数据的再利用
@@ -26,6 +28,72 @@
 //顺序表
 
 //具有 '一对一' 逻辑关系的数据按照次序连续存储到一整块物理空间上
+class table
+{
+    protected $head;
+    protected $length;
+    protected $size;
+
+    public function __construct($size)
+    {
+        $this->size = $size;
+        $this->head = array_pad([],$size,null);
+        $this->length = 0;
+    }
+
+    /**
+     * 添加元素
+     * @param $k
+     * @param $v
+     * @return void|null
+     */
+    public function add($k, $v)
+    {
+        if($k>=$this->size){
+            return null;
+        }
+        $this->head[$k] = $v;
+    }
+
+    /**
+     * 删除元素
+     * @param $k
+     * @return void|null
+     */
+    public function del($k)
+    {
+        if($k>=$this->size){
+            return null;
+        }
+        $this->head[$k] = null;
+    }
+
+    /**
+     * 查看元素
+     * @param $k
+     * @return mixed|null
+     */
+    public function get($k)
+    {
+        if($k>=$this->size){
+            return null;
+        }
+        return $this->head[$k];
+    }
+
+    /**
+     * 列表
+     */
+    public function list()
+    {
+        print_r($this->head);
+    }
+}
+//$a = new table(5);
+//$a->list();
+//$a->add(0,1);
+//$a->add(1,2);
+//$a->list();
 
 //链表
 
@@ -265,19 +333,8 @@ class StaticLink
 //$table->find("a");
 //var_dump($table->currentNode);
 ini_set("display_errors",1);
-//include "协程/UseYield.php";
-//include "协程/Task.php";
-//include "协程/Scheduler.php";
-//include "协程/SystemCall.php";
-//include "协程/KillTask.php";
-//include "协程/Socket.php";
-$arr[2] = 'huixinchen';
-$arr[1]  = 2007;
-$arr[0]  = 2008;
-foreach ($arr as $key => $val) {
-//结果是什么?
-    var_dump($val);
-}
+
+
 //跳跃表
 
 //节点元素之间具有'一对一'的逻辑关系且有序排列，节点之间的逻辑关系通过在每个节点中维持多个指向其他节点的指针，从而达到快速访问节点的目的
@@ -317,3 +374,185 @@ foreach ($arr as $key => $val) {
 //空间复杂度：衡量程序运行空间
 
 //常用复杂度关系：O(1)常数阶<O(logn)对数阶<O(n)线性阶<O(n2)平方阶<O(n3)立方阶<O(2^n)指数阶
+
+
+//给定一个字符串，让我们求最长无重复的字符子串，从例3中可以看出来，求的是连续最长的。如果不是连续结果就是pwke了。
+
+//动态规划
+//https://leetcode.cn/problems/coin-change/solution/322-ling-qian-dui-huan-by-leetcode-solution/
+const INT_MAX = 999;
+
+/**
+ * 记忆化递归
+ * @param $coins
+ * @param $amount
+ * @param $mem
+ * @return int|mixed
+ */
+function dp($coins,$amount,&$mem)
+{
+    if($amount<0) return -1;
+    if($amount == 0) return 0;
+    if(isset($mem[$amount])) return $mem[$amount];
+    $min = INT_MAX;
+    foreach ($coins as $coin){
+        $dp = dp($coins,$amount-$coin,$mem);
+        if($dp<0) continue;
+        if($dp<$min){
+            $min = $dp+1;
+        }
+    }
+    $mem[$amount] = $min;
+    return $min == INT_MAX?-1:$min;
+}
+
+/**
+ * 动态规划
+ * @param $coins
+ * @param $amount
+ * @return int|mixed
+ */
+function dp2($coins,$amount)
+{
+    $dp[0] = 0;
+    for($i=1;$i<$amount+1;$i++){
+        $dp[$i] = INT_MAX;
+        foreach ($coins as $coin){
+            if($i-$coin<0) continue;
+            if($dp[$i-$coin]==INT_MAX) continue;
+            if($dp[$i-$coin]<$dp[$i]){
+                $dp[$i] = $dp[$i-$coin]+1;
+            }
+        }
+    }
+    return $dp[$amount];
+}
+
+
+/**
+ * 青蛙跳阶问题
+ * @param $n
+ * @return int|mixed
+ */
+function dp3($n)
+{
+    if($n<1){
+        return 0;
+    }
+    $dp[1] = 1;
+    $dp[2] = 2;
+    if($n<3){
+        return $dp[$n];
+    }
+    for ($i=3;$i<=$n;$i++){
+        $dp[$i] = $dp[$i-1] + $dp[$i-2];
+    }
+    return $dp[$n];
+}
+
+function dp4($s,$p)
+{
+    $slen = strlen($s);
+    $plen = strlen($p);
+    $i=0;
+    $j=0;
+    while ($i<$slen && $j<$plen){
+        if($s[$i] == $p[$j]){
+            $i++;
+            $j++;
+            continue;
+        }
+        if($p[$j] == "."){
+            $i++;
+            $j++;
+            continue;
+        }
+        if($j+1<$plen && $p[$j+1] == "*"){
+            $i++;
+            $j++;
+            $j++;
+            continue;
+        }
+
+        if($p[$j] == "*" && $j-1>=0){
+            if($p[$j-1] == "."){
+                $i++;
+                continue;
+            }
+            if($p[$j-1] == $s[$i]){
+                $i++;
+                continue;
+            }
+            $i++;
+            $j++;
+            continue;
+        }
+        break;
+    }
+    if($i == $slen){
+        return true;
+    }
+    return false;
+}
+//var_dump(dp4("ab","a.*b"));
+
+/**
+ * 求最大子数组
+ * @param $arr
+ * @return float|int|mixed
+ */
+function dp5($arr)
+{
+  $n = count($arr);
+  if($n<=1){
+      return array_sum($arr);
+  }
+  $max = max($arr);
+  for($i=2;$i<=$n;$i++){
+      $offset = 0;
+      while($offset<$n-$i+1){
+          $sum = array_sum(array_slice($arr,$offset,$i));
+          if($sum>$max){
+              $max = $sum;
+          }
+          $offset++;
+      }
+  }
+  return $max;
+}
+function dp6($arr)
+{
+    $dp[0] = $arr[0];
+    for ($i=1,$len=count($arr);$i<$len;$i++){
+        if($dp[$i-1]<0){
+            $dp[$i] = $arr[$i];
+        }else{
+            $dp[$i] = $dp[$i-1]+$arr[$i];
+        }
+    }
+    return max($dp);
+}
+//var_dump(dp6([-2,1,-3,4,-1,2,1,-5,4]));
+function dp7($arr)
+{
+    for ($i=0,$x=count($arr);$i<$x;$i++){
+        for ($j=0,$y=count($arr[$i]);$j<$y;$j++){
+            if($i>0 && $j>0){
+                $arr[$i][$j] = $arr[$i-1][$j]>$arr[$i][$j-1]?$arr[$i][$j] + $arr[$i-1][$j]:$arr[$i][$j] + $arr[$i][$j-1];
+            }elseif($i>0){
+                $arr[$i][$j] = $arr[$i][$j] + $arr[$i-1][$j];
+            } elseif($j>0){
+                $arr[$i][$j] = $arr[$i][$j] + $arr[$i][$j-1];
+            }
+        }
+    }
+    return $arr[$i-1][$j-1];
+}
+//var_dump(dp7([
+//    [1,3,2,1],
+//    [1,5,7,4],
+//    [9,2,1,3],
+//    [8,2,1,1],
+//]));
+
+
