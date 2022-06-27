@@ -259,3 +259,333 @@ function longComStr($arr1,$arr2)
 /**
  * 13 http 状态码及其含意
  */
+
+
+/**
+ * 30.写个函数，判断下面扩号是否闭合，左右对称即为闭合： ((()))，)(())，(())))，(((((())，(()())，()()
+ */
+function symmetry($str)
+{
+    $strlen = strlen($str);
+    $left = 0;
+    $right = $strlen-1;
+    while (true){
+        if($str[$left] != mirrorBracket($str[$right])){
+            return false;
+        }
+        if($left>=$right){
+            break;
+        }
+        $left++;
+        $right--;
+    }
+    return true;
+}
+function mirrorBracket($char)
+{
+    if($char == "("){
+        return ")";
+    }
+    if($char == ")"){
+        return "(";
+    }
+    return $char;
+}
+//var_dump(symmetry("((()))"),symmetry(")(())"),symmetry("(())))"),symmetry("(((((())"),symmetry("(()())"),symmetry("()()"));
+
+/**
+ * 31.找出数组中不重复的值 [1,2,3,3,2,1,5]
+ */
+function filterRepeatVal($arr)
+{
+    $return = [];
+    for($i=0,$len = count($arr);$i<$len;$i++){
+        if(isset($return[$arr[$i]])){
+            $return[$arr[$i]] ++;
+        }else{
+            $return[$arr[$i]] = 1;
+        }
+    }
+    foreach($return as $k=>$val){
+        if($val>1){
+            unset($return[$k]);
+        }
+    }
+    return array_keys($return);
+}
+//var_dump(filterRepeatVal([1,2,3,3,2,1,5]));
+/**
+ * 32.PHP 的的这种弱类型变量是怎么实现的？
+ */
+
+/**
+ * 33.在 HTTP 通讯过程中，是客户端还是服务端主动断开连接？
+ */
+
+/**
+ * 34.PHP 中发起 http 请求有哪几种方式？它们有何区别？
+ */
+
+/**
+ * 35.有一颗二叉树，写代码找出来从根节点到 flag 节点的最短路径并打印出来，flag 节点有多个。比如下图这个树中的 6 和 14 是 flag 节点，请写代码打印 8、3、6 和 8、10、14 两个路径
+ */
+
+/**
+ * 36.有两个文件，大小都超过了 1G，一行一条数据，每行数据不超过 500 字节，两文件中有一部分内容是完全相同的，请写代码找到相同的行，并写到新文件中。PHP 最大允许内内为 255M。
+ */
+//相当于把两个大数组拆分成若干个小数组，循环遍历小数组，找出相同元素，组成新数组
+
+/**
+ * 37.请写出自少两个支持回调处理的 PHP 函数，并自己实现一个支持回调的 PHP 函数
+ */
+function u_array_filter($arr ,Callable $callback)
+{
+    for($i=0,$len=count($arr);$i<$len;$i++){
+        if($callback($arr[$i]) === false){
+            unset($arr[$i]);
+        }
+    }
+    return array_values($arr);
+}
+//var_dump(u_array_filter([1,3,5],function($item){
+//    return $item>3;
+//}));
+/**
+ * 38.请写出自少两个获取指定文件夹下所有文件的方法
+ */
+
+/**
+ * 39.请写出自少三种截取文件名后缀的方法或函数
+ */
+
+/**
+ * 40.PHP 如何实现不用自带的 cookie 函数为客户端下发 cookie。对于分布式系统，如何来保存 session 值。
+ */
+/**
+ * decrypt AES 256
+ *
+ * @param string $edata
+ * @param string $password
+ * @return string data
+ */
+function decrypt($edata, $password) {
+    $data = base64_decode($edata);
+    $salt = substr($data, 0, 16);
+    $ct = substr($data, 16);
+
+    $rounds = 3; // depends on key length
+    $data00 = $password.$salt;
+    $hash = array();
+    $hash[0] = hash('sha256', $data00, true);
+    $result = $hash[0];
+    for ($i = 1; $i < $rounds; $i++) {
+        $hash[$i] = hash('sha256', $hash[$i - 1].$data00, true);
+        $result .= $hash[$i];
+    }
+    $key = substr($result, 0, 32);
+    $iv  = substr($result, 32,16);
+
+    return openssl_decrypt($ct, 'AES-256-CBC', $key, true, $iv);
+}
+
+/**
+ * crypt AES 256
+ *
+ * @param string $data
+ * @param string $password
+ * @return string encrypted data
+ */
+function encrypt($data, $password) {
+    // Set a random salt
+    $salt = openssl_random_pseudo_bytes(16);
+
+    $salted = '';
+    $dx = '';
+    // Salt the key(32) and iv(16) = 48
+    while (strlen($salted) < 48) {
+        $dx = hash('sha256', $dx.$password.$salt, true);
+        $salted .= $dx;
+    }
+
+    $key = substr($salted, 0, 32);
+    $iv  = substr($salted, 32,16);
+
+    $encrypted_data = openssl_encrypt($data, 'AES-256-CBC', $key, true, $iv);
+    return base64_encode($salt . $encrypted_data);
+}
+class EncryptedSessionHandler extends SessionHandler
+{
+    private $key;
+
+    public function __construct($key)
+    {
+        $this->key = $key;
+    }
+
+    public function read($id)
+    {
+        $data = parent::read($id);
+        echo "read from ".$id."\n";
+        if (!$data) {
+            return "";
+        } else {
+            return decrypt($data, $this->key);
+        }
+    }
+
+    public function write($id, $data)
+    {
+        $data = encrypt($data, $this->key);
+        echo "write from ".$id."\n";
+        return parent::write($id, $data);
+    }
+}
+//ini_set('session.save_handler', 'files');
+//
+//$key = 'secret_string';
+//$handler = new EncryptedSessionHandler($key);
+//session_set_save_handler($handler, true);
+//session_start();
+////$_SESSION["delete_time"] = time();
+//var_dump($_SESSION);
+
+//字符串（int embstr raw） 哈希(ziplist hashtable) 列表(ziplist linkedlist) 集合(intset hashtable) 有序集合(ziplist skiplist)
+/**
+ * 41.请用 SHELL 统计 5 分钟内，nginx 日志里访问最多的 URL 地址，对应的 IP 是哪些？
+ */
+
+/**
+ * 42.mysql 数据库中 innodb 和 myisam 引擎的区别
+ */
+
+/**
+ * 43.从用户在浏览器中输入网址并回车，到看到完整的见面，中间都经历了哪些过程。
+ */
+
+/**
+ * 44.如何分析一条 sql 语句的性能。
+ */
+
+/**
+ * 45.$a=[0,1,2,3]; $b=[1,2,3,4,5]; $a+=$b; var_dump ($a) 等于多少
+ */
+$a=[0,1,2,3]; $b=[1,2,3,4,5];
+//$a+=$b;
+$a = array_merge($a,$b);
+//var_dump ($a);
+
+/**
+ * 46.$a=[1,2,3]; foreach ($a as &$v){} foreach ($a as $v){} var_dump ($a)
+ */
+$v = 3;
+$a=[1,2,&$v];
+
+foreach ($a as $v){
+    if($v == 1){
+        break;
+    }
+}
+//var_dump ($a);
+/**
+ * 47.数据库中的存放了用户 ID, 扣费很多行，redis 中存放的是用户的钱包，现在要写一个脚本，将数据库中的扣费记录同步到 redis 中，每 5 分钟执行一次。请问要考虑哪些问题？
+ */
+
+function syncData()
+{
+    //防重复
+    //避开高峰期
+    //定时任务
+    //连接池
+    //协程
+}
+/**
+ * 48.MYSQL 主从服务器，如果主服务器是 innodb 引擎，从服务器是 myisam 引擎，在实际应用中，会遇到什么问题？
+ */
+
+/**
+ * 49.linux 中进程信号有哪些？
+ */
+
+/**
+ * 50.异步模型
+ */
+
+/**
+ * 51.10g 文件，用 php 查看它的行数
+ */
+
+/**
+ * 52.有 10 亿条订单数据，属于 1000 个司机的，请取出订单量前 20 的司机
+ */
+
+/**
+ * 53.根据 access.log 文件统计最近 5 秒的 qps，并以如下格式显示，01 1000
+ */
+
+/**
+ * 54.有一个 1G 大小的一个文件，里面每一行是一个词，词的大小不超过 16 个字节，内存限制大小是 1M。返回频数最高的 100 个词
+ */
+
+/**
+ * 55.php 进程模型，php 怎么支持多个并发
+ */
+
+/**
+ * 56.nginx 的进程模型，怎么支持多个并发
+ */
+
+/**
+ * 57.让你实现一个简单的架构，并保持高可用，两个接口，一个上传一条文本，一个获取上传的内容，你怎么来设计？要避免单机房故障，同时要让代码层面无感。
+ */
+
+/**
+ * 58.两台 mysql 服务器，其中一台挂了，怎么让业务端无感切换，并保证正常情况下讲台服务器的数据是一致的
+ */
+
+/**
+ * 59.http 协议具体的定义
+ */
+
+/**
+ * 60.什么是锁，怎么解决锁的问题
+ */
+
+/**
+ * 61.mysql 事务隔离是怎么实现的
+ */
+
+/**
+ * 62.mysql 的锁怎么实现的
+ */
+
+/**
+ * 69.对称加密和非对称加密的方式
+ */
+
+/**
+ * 70.10 瓶水，其中一瓶有毒，小白鼠喝完有毒的水之后，会在 24 小时后死亡，问：最少用几只小白鼠可以在 24 小时后找到具体是哪一瓶水有毒。
+ */
+
+/**
+ * 71.redis 是如何进行同步的，同步的方式，同步回滚怎么办，数据异常怎么办，同时会问 MYSQL 的同步方式和相关异常情况
+ */
+
+/**
+ * 72.Trait 优先级
+ */
+
+/**
+ * 73.在一个坐标系内有一个 N 个点组成的多边形，现在有一个坐标点，写代码或思路来判断这个点是否处于多边形内
+ */
+
+/**
+ * 74.数据库如果出现了死锁，你怎么排查，怎么判断出现了死锁？
+ */
+
+/**
+ * 75.写一个一个程序来查找最长子串
+ */
+
+/**
+ * 76.分析一个问题:php-fpm 的日志正常，但客户端却超时了，你认为可能是哪里出了问题，怎么排查？
+ */
