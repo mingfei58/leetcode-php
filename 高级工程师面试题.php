@@ -173,32 +173,38 @@ function firstComNode($l1,$l2)
     $s2 = $l2->next;
     $finish1 = false;
     $finish2 = false;
+    $firstNode = null;
     while(true){
-        if($finish1 && $finish2 && $s1->val == $s2->val){
+        if($finish1 && $finish2 && $s1 === $s2){
+            $firstNode = $s1;
             break;
         }
         if($s1!=null){
             $s1 = $s1->next;
-        }else{
+        }elseif(!$finish1){
             $finish1 = true;
             $s1 = $l2->next;
+        }else{
+            break;
         }
         if($s2!=null){
             $s2 = $s2->next;
-        }else{
+        }elseif(!$finish2){
             $finish2 = true;
             $s2 = $l1->next;
+        }else{
+            break;
         }
     }
-    return $s1->val;
+    return $firstNode;
 }
 
 $n1 = new ListNode(1);
-$n2 = new ListNode(2);
+$n2 = new ListNode(5);
 $n3 = new ListNode(3);
-$n4 = new ListNode(4);
+$n4 = new ListNode(3);
 $n5 = new ListNode(5);
-$n6 = new ListNode(6);
+$n6 = new ListNode(5);
 $n7 = new ListNode(7);
 $n8 = new ListNode(8);
 
@@ -210,8 +216,7 @@ $n7->next = $n8;
 $n3->next = $n4;
 $n4->next = $n5;
 $n5->next = $n6;
-//print_r(firstComNode($n1,$n3));
-
+var_dump(firstComNode($n1,$n3));
 
 
 /**
