@@ -1,6 +1,7 @@
 # [库题1](http://www.h-camel.com/category.html)
 
 ## Vue篇
+[路由](https://www.jianshu.com/p/d844f004ea40)
 1. vue的特点
 ``` 
 优点：
@@ -239,3 +240,127 @@ return val + hobby
 ``` 
 配置webpack
 ```
+
+23. vue在开发过程中要同时跟N个不同的后端人员联调接口（请求的url不一样）时你该怎么办
+
+``` 
+devServer中把所有的服务人员的地址代理都写进去，然后动态更改接口的baseUrl，这样切换不同后端人员的时候不用重启
+```
+
+24. vue怎么获取DOM节点？
+
+```
+ <input ref="myInput" type="text" value="hello world">
+  
+this.$refs.xx
+```
+
+25. vue在created和mounted这两个生命周期中请求数据有什么区别呢？
+
+``` 
+created DOM还未加载完
+mounted DOM已加载完，页面已完成渲染
+```
+
+26. vue部署上线前需要做哪些准备工作
+
+``` 
+是否需要配置nginx，publicPath，是不是需要配置cdn
+```
+
+27. vue-cli默认是单页面的，那要弄成多页面该怎么办呢
+
+``` 
+在 multi-page 模式下构建应用。每个“page”应该有一个对应的 JavaScript 入口文件
+```
+
+28. vue-router是用来做什么的？它有哪些组件？
+
+``` 
+让SPA像多页面应用一样实现跳转
+
+router-view router-link
+```
+
+29. vue-router钩子函数有哪些？都有哪些参数
+>
+>- 导航被触发。
+>- 在失活的组件里调用beforeRouteLeave守卫。
+>- 调用全局的beforeEach守卫。 
+>- 在重用的组件里调用beforeRouteUpdate守卫 (2.2+)。 
+>- 在路由配置里调用beforeEnter。 
+>- 解析异步路由组件。 
+>- 在被激活的组件里调用beforeRouteEnter。 调用全局的beforeResolve守卫(2.5+)。 
+>- 导航被确认。 调用全局的afterEach钩子。 
+>- 触发DOM更新。 
+>- 调用beforeRouteEnter守卫中传给next的回调函数，创建好的组件实例会作为回调函数的参数传入。
+
+
+30. 如果vue-router使用history模式，部署时要注意什么？
+
+>vue应用为SPA，hash模式下，改变hash值，网络请求地址不会变，刷新url或者改变url不会出现404问题。
+history模式，如果刷新url或改变url，网络请求的地址不存在，因为vue应用实际只有一个html，找不到会出现404错误。
+解决办法，将所有的网络请求全部指向根页面，就不会出现404了
+
+31. 路由之间是怎么跳转的？有哪些方式？
+>- 组件跳转：router-link
+>- 编程导航：router.push router.go router.replace 
+
+32. 怎么实现路由懒加载呢？
+>- es6的import方法：()=>import()
+>- vue的异步组件技术：component: resolve => require(['放入需要加载的路由地址'], resolve)
+
+33. 怎样动态加载路由
+> router.addRoute
+
+34. 在vue组件中怎么获取到当前的路由信息
+> this.$route.path
+
+35. 如何获取路由传过来的参数
+> this.$route.params
+
+36. 切换到新路由时，页面要滚动到顶部或保持原先的滚动位置怎么做呢？
+
+```
+//在路由实例中配置
+scrollBehavior(ro,form,savedPosition){
+//滚动到顶部
+return {x:0,y:0}
+//保持原先的滚动位置
+return {selector：falsy}
+}
+```
+
+37. vue-router如何响应路由参数的变化
+
+> watch
+
+38. 有用过vuex吗？它主要解决的是什么问题？推荐在哪些场景用？
+> 全局变量，登录人信息，token，浏览记录，跨组件数据传递
+
+39. vuex的store有几个属性值？分别讲讲它们的作用是什么？
+>- state：存放公共数据的地方 
+>- getter：获取根据业务场景处理返回的数据 
+>- mutations：唯一修改state的方法，修改过程是同步的 
+>- action：异步处理，通过分发操作触发mutation 
+>- module：将store模块分割，减少代码臃肿
+
+40. 页面刷新后vuex的state数据丢失怎么解决
+> sessionStorage
+
+41. 怎么监听vuex数据的变化？
+> watch computed
+
+42. 请求数据是写在组件的methods中还是在vuex的action中
+> 如果请求的数据是多个组件共享的，为了方便只写一份，就写vuex里面，如果是组件独用的就写在当前组件里面
+
+43. ElementUI表格组件如何实现动态表头
+> el-table-column
+
+44. ElementUI怎么修改组件的默认样式？
+> 自定义主题
+
+45. ElementUI是怎么做表单验证的？在循环里对每个input验证怎么做呢？
+> this.$ref.ruleForm.validate
+
+46. 
