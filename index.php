@@ -6,13 +6,57 @@
 //https://www.edrawmax.cn/online/zh/workbench
 //https://www.cnblogs.com/dongry/p/10210609.html
 
-require_once "高级工程师面试题.php";
+//require_once "高级工程师面试题.php";
 //require_once "协程/UseYield.php";
 //数据结构
 
 //存储具有复杂关系的数据方便于后期对数据的再利用
+class Solution {
 
-
+    /**
+     * 冒泡排序
+     * @param Integer[] $nums
+     * @return Integer[]
+     */
+    function bubbleSort($nums) {
+        $len = count($nums);
+        for($i=0;$i<$len;$i++){
+            for($j=0;$j<$len-$i-1;$j++){
+                if($nums[$j]>$nums[$j+1]){
+                    $temp = $nums[$j];
+                    $nums[$j] = $nums[$j+1];
+                    $nums[$j+1] = $temp;
+                }
+            }
+        }
+        return $nums;
+    }
+    /**
+     * 快速排序
+     * @param Integer[] $nums
+     * @return Integer[]
+     */
+    function quickSort($nums){
+        $len=count($nums);
+        if($len <= 1){
+            return $nums;
+        }
+        $base = $nums[0];
+        $left = $right = [];
+        for ($i=1;$i<$len;$i++){
+            if($nums[$i]<$base){
+                $left[] = $nums[$i];
+            }else{
+                $right[] = $nums[$i];
+            }
+        }
+        $left = $this->quickSort($left);
+        $right = $this->quickSort($right);
+        return array_merge($left,[$base],$right);
+    }
+}
+$solution = new Solution();
+print_r($solution->quickSort([5,4,2,3,1]));
 
 //存储方式
 
