@@ -54,9 +54,149 @@ class Solution {
         $right = $this->quickSort($right);
         return array_merge($left,[$base],$right);
     }
+    /**
+     * 插入排序
+     * @param Integer[] $nums
+     * @return Integer[]
+     */
+    function insertionSort(array $nums){
+        $len = count($nums);
+        $sortedNums[0] = $nums[0];
+        for ($i=1;$i<$len;$i++){
+            $l = count($sortedNums);
+            $sortedNums[$l] = $nums[$i];
+            for ($j = $l;$j>0;$j--){
+                if($sortedNums[$j] < $sortedNums[$j-1]){
+                    $temp = $sortedNums[$j];
+                    $sortedNums[$j] = $sortedNums[$j-1];
+                    $sortedNums[$j-1] = $temp;
+                }
+            }
+        }
+        return $sortedNums;
+    }
+    //归并切分块大小
+    const CHUNK_SIZE = 2;
+    /**
+     * 归并排序
+     * @param Integer[] $nums
+     * @return Integer[]
+     */
+    function mergeSort(array $nums){
+        //分块
+        $chunks = array_chunk($nums,self::CHUNK_SIZE);
+        while(count($chunks) > 1){
+            $objectSort1 = $this->quickSort(array_pop($chunks));
+            $objectSort2 = $this->quickSort(array_pop($chunks));
+            $l = count($objectSort1);
+            //两两合并
+            for($i=0,$l1 = count($objectSort2);$i<$l1;$i++){
+                $objectSort1[$l] = $objectSort2[$i];
+                $l++;
+                for($j=$l-1;$j>0;$j--){
+                    if($objectSort1[$j] < $objectSort1[$j-1]){
+                        $temp = $objectSort1[$j];
+                        $objectSort1[$j] = $objectSort1[$j-1];
+                        $objectSort1[$j-1] = $temp;
+                    }
+                }
+            }
+            array_unshift($chunks,$objectSort1);
+        }
+
+        return array_pop($chunks);
+    }
+    /**
+     * [heapSort 堆排序实现]
+     *
+     * @param  [array] $arr [待排序的无序数组]
+     *
+     * @return void
+     */
+    function heapSort(&$arr)
+    {
+        /**
+         * 将待排序数组构建成一个大顶（根）堆
+         * 构建说明：从最后（下）一个非叶子节点，比较当前节点和子节点，找到最小的点，进行交换，
+         * 循环向堆顶递进，最后就形成了一个大顶（根）堆
+         */
+        $len = count($arr);
+
+        //第一次构建堆，我们从第一个非叶子节点开始调整一直循环到根节点为止，则构造完成
+        for ($i = ($len >> 1) - 1; $i >= 0; $i--) {
+            $this->heapAdjust($arr, $i, $len);
+        }
+
+        for ($i = $len - 1; $i >= 0; $i--) {
+            //交换根顶和根尾元素
+            list($arr[0], $arr[$i]) = array($arr[$i], $arr[0]);
+
+            //调整堆，我们只需要从根节点开始向下调整
+            $this->heapAdjust($arr, 0, $i);
+        }
+        return $arr;
+    }
+    /**
+     * 构建堆
+     *
+     * @param  [array] $arr  [待排序无序数组]
+     * @param  [int] $start [第一个需要调整的非叶子节点]
+     * @param  [int] $len  [元素个数]
+     *
+     * @return void
+     */
+    function heapAdjust(&$arr, $start, $len)
+    {
+
+        for ($child = $start * 2 + 1; $child < $len; $child = $child * 2 + 1) {
+            //左节点小于右节点
+            if ($child != $len - 1 && $arr[$child] < $arr[$child + 1]) {
+                $child++;  //此时子节点指向右子节点
+            }
+
+            //满足大顶（根）堆
+            if ($arr[$start] >= $arr[$child]) {
+                break;
+            }
+
+            //和子节点进行交换
+            list($arr[$start], $arr[$child]) = array($arr[$child], $arr[$start]);
+
+            $start = $child;
+        }
+    }
+    /**
+     * @param Integer[][] $grid
+     * @return Integer
+     */
+    function maxValue($grid) {
+        $dp = [];
+        $l1 = count($grid);
+        $l2 = count($grid[0]);
+        for($i=0;$i<$l1;$i++){
+            for ($j=0;$j<$l2;$j++){
+                if($i == 0 && $j == 0) $dp[$i][$j] = 0;
+                if($i == 0){
+                    $dp[$i][$j] = $dp[0][$j-1] + $grid[0][$j];
+                }
+                if($j == 0){
+                    $dp[$i][$j] = $dp[$i-1][0] + $grid[$i][0];
+                }
+                if($i > 0 && $j > 0){
+                    $dp[$i][$j] = $dp[$i-1][$j]>$dp[$i][$j-1]?$dp[$i-1][$j]+$grid[$i][$j]:$dp[$i][$j-1] + $grid[$i][$j];
+                }
+            }
+        }
+        return $dp[$l1-1][$l2-1];
+    }
 }
 $solution = new Solution();
-print_r($solution->quickSort([5,4,2,3,1]));
+$arr = [
+    1,3,2,
+    4,5,7,
+    9,8,6
+];
+print_r($solution->heapSort($arr));
 
 //存储方式
 
