@@ -485,12 +485,8 @@ $a = array_merge($a,$b);
 $v = 3;
 $a=[1,2,&$v];
 
-foreach ($a as $v){
-    if($v == 1){
-        break;
-    }
-}
-//var_dump ($a);
+foreach ($a as $v){}
+var_dump ($a);
 /**
  * 47.数据库中的存放了用户 ID, 扣费很多行，redis 中存放的是用户的钱包，现在要写一个脚本，将数据库中的扣费记录同步到 redis 中，每 5 分钟执行一次。请问要考虑哪些问题？
  */

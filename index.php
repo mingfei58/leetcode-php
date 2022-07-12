@@ -1,5 +1,4 @@
 <?php
-
 //https://learnku.com/articles/20714
 //http://c.biancheng.net/view/3339.html
 //https://www.modb.pro/db/72128
@@ -106,64 +105,96 @@ class Solution {
 
         return array_pop($chunks);
     }
+
     /**
-     * [heapSort 堆排序实现]
-     *
-     * @param  [array] $arr [待排序的无序数组]
-     *
-     * @return void
+     * 堆排序
+     * @param $arr
+     * @return mixed
      */
-    function heapSort(&$arr)
-    {
-        /**
-         * 将待排序数组构建成一个大顶（根）堆
-         * 构建说明：从最后（下）一个非叶子节点，比较当前节点和子节点，找到最小的点，进行交换，
-         * 循环向堆顶递进，最后就形成了一个大顶（根）堆
-         */
+    function heapSort(&$arr){
         $len = count($arr);
-
-        //第一次构建堆，我们从第一个非叶子节点开始调整一直循环到根节点为止，则构造完成
-        for ($i = ($len >> 1) - 1; $i >= 0; $i--) {
-            $this->heapAdjust($arr, $i, $len);
+        for ($i = ($len>>1)-1;$i>=0;$i--){
+            $this->heapAdjust($arr,$i,$len);
         }
-
-        for ($i = $len - 1; $i >= 0; $i--) {
-            //交换根顶和根尾元素
-            list($arr[0], $arr[$i]) = array($arr[$i], $arr[0]);
-
-            //调整堆，我们只需要从根节点开始向下调整
-            $this->heapAdjust($arr, 0, $i);
+        for($i = $len -1;$i>=0;$i--){
+            list($arr[0],$arr[$i]) = array($arr[$i],$arr[0]);
+            $this->heapAdjust($arr,0,$i);
         }
         return $arr;
     }
+
     /**
-     * 构建堆
-     *
-     * @param  [array] $arr  [待排序无序数组]
-     * @param  [int] $start [第一个需要调整的非叶子节点]
-     * @param  [int] $len  [元素个数]
-     *
-     * @return void
+     * 调整堆
+     * @param $arr
+     * @param $start
+     * @param $len
      */
-    function heapAdjust(&$arr, $start, $len)
-    {
-
-        for ($child = $start * 2 + 1; $child < $len; $child = $child * 2 + 1) {
-            //左节点小于右节点
-            if ($child != $len - 1 && $arr[$child] < $arr[$child + 1]) {
-                $child++;  //此时子节点指向右子节点
+    function heapAdjust(&$arr,$start,$len){
+        for($child = $start*2+1;$child<$len;$child = 2*$child+1){
+            if($child != $len-1 && $arr[$child]<$arr[$child+1]){
+                $child++;
             }
-
-            //满足大顶（根）堆
-            if ($arr[$start] >= $arr[$child]) {
+            if($arr[$start] > $arr[$child]){
                 break;
             }
-
-            //和子节点进行交换
-            list($arr[$start], $arr[$child]) = array($arr[$child], $arr[$start]);
-
+            list($arr[$start],$arr[$child]) = array($arr[$child],$arr[$start]);
             $start = $child;
         }
+    }
+    const DIGIT = 10;
+    /**
+     * 基数排序
+     * @param Integer[] $arr
+     * @return Integer[]
+     */
+    public function radixSort($arr,$radix=1){
+        $deep = 1;
+        while($radix>0){
+            $bucket = array_pad([],self::DIGIT,[]);//桶
+            foreach($arr as $v){
+                $k = ($v/$deep)%10;
+                array_push($bucket[$k],$v);
+            }
+            $k = 0;
+            for($i=0;$i<self::DIGIT;$i++){
+                if(empty($bucket[$i])) continue;
+                while($n = array_shift($bucket[$i])){
+                    $arr[$k] = $n;
+                    $k++;
+                }
+            }
+            $radix--;
+            $deep *=10;
+        }
+        return $arr;
+    }
+
+    /**
+     * 计数排序
+     * @param Integer[] $arr
+     * @param $max
+     * @param int $min
+     * @param int $step
+     * @return Integer[]
+     */
+    public function coutingSort($arr,$max,$min=0,$step=1){
+        $len = count($arr);
+        $bucket = [];
+        for($i=0;$i<$len;$i++){
+            $bucket[$arr[$i]] = ($bucket[$arr[$i]]??0)+1;
+        }
+        $newArr = [];
+        for($i = $min;$i <= $max;$i += $step){
+            if(empty($bucket[$i])){
+                continue;
+            }
+            while($bucket[$i]>0){
+                $newArr[] = $i;
+                $bucket[$i] --;
+            }
+        }
+        return $newArr;
+
     }
     /**
      * @param Integer[][] $grid
@@ -189,14 +220,15 @@ class Solution {
         }
         return $dp[$l1-1][$l2-1];
     }
+
 }
 $solution = new Solution();
 $arr = [
-    1,3,2,
-    4,5,7,
-    9,8,6
+    12,32,2,
+    4,5,217,
+    9,8,16
 ];
-print_r($solution->heapSort($arr));
+print_r($solution->coutingSort($arr,217));
 
 //存储方式
 
