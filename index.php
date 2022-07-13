@@ -14,6 +14,8 @@ class Solution {
 
     /**
      * 冒泡排序
+     * 时间复杂度 O(n^2)
+     * 空间复杂度 O(1)
      * @param Integer[] $nums
      * @return Integer[]
      */
@@ -32,6 +34,8 @@ class Solution {
     }
     /**
      * 快速排序
+     * 时间复杂度 O(n^2)
+     * 空间复杂度 O(logn)
      * @param Integer[] $nums
      * @return Integer[]
      */
@@ -55,29 +59,30 @@ class Solution {
     }
     /**
      * 插入排序
+     * 时间复杂度 O(n^2)
+     * 空间复杂度 O(1)
      * @param Integer[] $nums
      * @return Integer[]
      */
     function insertionSort(array $nums){
         $len = count($nums);
-        $sortedNums[0] = $nums[0];
         for ($i=1;$i<$len;$i++){
-            $l = count($sortedNums);
-            $sortedNums[$l] = $nums[$i];
-            for ($j = $l;$j>0;$j--){
-                if($sortedNums[$j] < $sortedNums[$j-1]){
-                    $temp = $sortedNums[$j];
-                    $sortedNums[$j] = $sortedNums[$j-1];
-                    $sortedNums[$j-1] = $temp;
+            for ($j = $i;$j>0;$j--){
+                if($nums[$j] < $nums[$j-1]){
+                    $temp = $nums[$j];
+                    $nums[$j] = $nums[$j-1];
+                    $nums[$j-1] = $temp;
                 }
             }
         }
-        return $sortedNums;
+        return $nums;
     }
     //归并切分块大小
     const CHUNK_SIZE = 2;
     /**
      * 归并排序
+     * 时间复杂度 O(nlogn)
+     * 空间复杂度 O(n)
      * @param Integer[] $nums
      * @return Integer[]
      */
@@ -108,8 +113,10 @@ class Solution {
 
     /**
      * 堆排序
-     * @param $arr
-     * @return mixed
+     * 时间复杂度 O(nlogn)
+     * 空间复杂度 O(1)
+     * @param Integer[] $arr
+     * @return Integer[]
      */
     function heapSort(&$arr){
         $len = count($arr);
@@ -144,6 +151,8 @@ class Solution {
     const DIGIT = 10;
     /**
      * 基数排序
+     * 时间复杂度 O(n*k)
+     * 空间复杂度 O(n+k)
      * @param Integer[] $arr
      * @return Integer[]
      */
@@ -171,6 +180,8 @@ class Solution {
 
     /**
      * 计数排序
+     * 时间复杂度 O(n+k)
+     * 空间复杂度 O(k)
      * @param Integer[] $arr
      * @param $max
      * @param int $min
@@ -183,17 +194,18 @@ class Solution {
         for($i=0;$i<$len;$i++){
             $bucket[$arr[$i]] = ($bucket[$arr[$i]]??0)+1;
         }
-        $newArr = [];
+        $j = 0;
         for($i = $min;$i <= $max;$i += $step){
             if(empty($bucket[$i])){
                 continue;
             }
             while($bucket[$i]>0){
-                $newArr[] = $i;
+                $arr[$j] = $i;
+                $j++;
                 $bucket[$i] --;
             }
         }
-        return $newArr;
+        return $arr;
 
     }
     /**
@@ -228,7 +240,7 @@ $arr = [
     4,5,217,
     9,8,16
 ];
-print_r($solution->coutingSort($arr,217));
+print_r($solution->insertionSort($arr));
 
 //存储方式
 
