@@ -32,6 +32,29 @@ class Solution {
         }
         return $nums;
     }
+
+    /**
+     * 选择排序
+     * 时间复杂度 O(n^2)
+     * 空间复杂度 O(1)
+     * @param Integer[] $nums
+     * @return Integer[]
+     */
+    function selectionSort($nums){
+        $len = count($nums);
+        for($i=0;$i<$len;$i++){
+            $min = $i;
+            for($j=$i+1;$j<$len;$j++){
+                if($nums[$min] > $nums[$j]){
+                    $min = $j;
+                }
+            }
+            if($min != $i){
+                list($nums[$i],$nums[$min]) = array($nums[$min],$nums[$i]);
+            }
+        }
+        return $nums;
+    }
     /**
      * 快速排序
      * 时间复杂度 O(n^2)
@@ -100,6 +123,8 @@ class Solution {
                 for($j=$l-1;$j>0;$j--){
                     if($objectSort1[$j] < $objectSort1[$j-1]){
                         $temp = $objectSort1[$j];
+
+
                         $objectSort1[$j] = $objectSort1[$j-1];
                         $objectSort1[$j-1] = $temp;
                     }
@@ -218,6 +243,8 @@ class Solution {
         $l2 = count($grid[0]);
         for($i=0;$i<$l1;$i++){
             for ($j=0;$j<$l2;$j++){
+
+
                 if($i == 0 && $j == 0) $dp[$i][$j] = 0;
                 if($i == 0){
                     $dp[$i][$j] = $dp[0][$j-1] + $grid[0][$j];
@@ -240,7 +267,7 @@ $arr = [
     4,5,217,
     9,8,16
 ];
-print_r($solution->insertionSort($arr));
+print_r($solution->selectionSort($arr));
 
 //存储方式
 
