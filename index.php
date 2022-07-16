@@ -238,36 +238,68 @@ class Solution {
      * @return Integer
      */
     function maxValue($grid) {
+        //dp是二维数组，dp[i][j]表示在当前坐标下礼物的最大价值
         $dp = [];
         $l1 = count($grid);
         $l2 = count($grid[0]);
         for($i=0;$i<$l1;$i++){
             for ($j=0;$j<$l2;$j++){
-
-
-                if($i == 0 && $j == 0) $dp[$i][$j] = 0;
-                if($i == 0){
-                    $dp[$i][$j] = $dp[0][$j-1] + $grid[0][$j];
-                }
-                if($j == 0){
-                    $dp[$i][$j] = $dp[$i-1][0] + $grid[$i][0];
-                }
-                if($i > 0 && $j > 0){
-                    $dp[$i][$j] = $dp[$i-1][$j]>$dp[$i][$j-1]?$dp[$i-1][$j]+$grid[$i][$j]:$dp[$i][$j-1] + $grid[$i][$j];
+                if($i == 0 && $j == 0){
+                    $dp[$i][$j] = $grid[$i][$j];
+                }elseif($i == 0 || ($dp[$i][$j-1]>$dp[$i-1][$j])){
+                    $dp[$i][$j] = $grid[$i][$j] + $dp[$i][$j-1];
+                }else{
+                    $dp[$i][$j] = $grid[$i][$j] + $dp[$i-1][$j];
                 }
             }
         }
         return $dp[$l1-1][$l2-1];
     }
+    function translateNum($num) {
+        $num = strval($num);
+        $len = strlen($num);
+        if($len==0){
+            return 1;
+        }
+        //dp数组key表示数字长度value表示当前长度有多少种翻译情况翻译
+        $dp[0] = 1;
+        $dp[1] = 1;
+        for ($i=1;$i<$len;$i++){
+            $k = $i +1;
+            if($num[$i-1] == 1 || ($num[$i-1] == 2 && $num[$i]<=5)){
+                $dp[$k] = $dp[$k-2] + $dp[$k-1];
+            }else{
+                $dp[$k] = $dp[$k-1];
+            }
+        }
+        return $dp[$len];
+    }
+    function maxSubArray($nums) {
+        $len=count($nums);
+        if($len==0){
+            return 0;
+        }
+        //dp数组k对应的数值表示nums[k]加上k0->（k-1）为连续数字之和大于0的序列（如果不大于零，重置k为k0）
+        $dp = [];
+        $dp[0] = $nums[0];
+        for($i=1;$i<$len;$i++){
+            if($dp[$i-1]>0){
+                $dp[$i] = $nums[$i] + $dp[$i-1];
+            }else{
+                $dp[$i] = $nums[$i];
+            }
+        }
+        return max($dp);
 
+    }
 }
 $solution = new Solution();
 $arr = [
     12,32,2,
-    4,5,217,
+    4,5,-217,
     9,8,16
 ];
-print_r($solution->selectionSort($arr));
+print_r($solution->maxSubArray($arr));
 
 //存储方式
 
