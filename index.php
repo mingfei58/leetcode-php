@@ -292,6 +292,97 @@ class Solution {
         return max($dp);
 
     }
+
+    /**
+     * 求解最大回文子串
+     */
+    function longestPalindrome($str)
+    {
+        $len = strlen($str);
+        if($len<2){
+            return $str;
+        }
+        $maxLen = 1;
+        $begin = 0;
+        $dp = array_pad([],$len,array_pad([],$len,false));
+        for($i=0;$i<$len;$i++){
+            $dp[$i][$i] = true;
+        }
+        //子串长度
+        for ($l=2;$l<=$len;$l++){
+            //子串起点
+            for ($i=0;$i<$len-$l+1;$i++){
+                $j = $i+$l-1;
+                if($j>$len || $str[$i]!=$str[$j]){
+                    continue;
+                }
+                if($l==2){
+                    $dp[$i][$j] = true;
+                }else{
+                    $dp[$i][$j] = $dp[$i+1][$j-1];
+                }
+                if($dp[$i][$j] && $l>$maxLen){
+                    $maxLen = $l;
+                    $begin = $i;
+                }
+            }
+        }
+        return substr($str,$begin,$maxLen);
+    }
+    protected $id;
+    protected $rank;
+    function unionFind()
+    {
+        $this->id = $this->rank = [];
+        $n = 10;
+        for ($i=0;$i<$n;$i++){
+            $this->id[$i] = $i;
+            $this->rank[$i] = 1;
+        }
+    }
+    function find($p)
+    {
+        while(true){
+            if(!isset($this->id[$p])){
+                throw new Exception("no found");
+            }
+            if($this->id[$p] == $p){
+                break;
+            }
+            $p = $this->id[$p];
+        }
+        return $this->id[$p];
+    }
+    function isConnected($p,$q)
+    {
+        return $this->find($p) === $this->find($q);
+    }
+
+    /**
+     * 连接两个元素
+     * @param $p
+     * @param $q
+     */
+    function unionElements($p,$q)
+    {
+        $pRoot = $this->find($p);
+        $qRoot = $this->find($q);
+        if($pRoot == $qRoot){
+            return;
+        }
+        if($this->rank[$pRoot] < $this->rank[$qRoot]){
+            $this->id[$pRoot] = $qRoot;
+        }elseif($this->rank[$pRoot] > $this->rank[$qRoot]){
+            $this->id[$qRoot] = $pRoot;
+        }else{
+            $this->id[$pRoot] = $qRoot;
+            $this->rank[$qRoot]++;
+        }
+    }
+    function printId()
+    {
+        print_r($this->id);
+    }
 }
 $solution = new Solution();
 $arr = [
@@ -299,8 +390,32 @@ $arr = [
     4,5,-217,
     9,8,16
 ];
-print_r($solution->maxSubArray($arr));
-
+//print_r($solution->longestPalindrome("abccb"));
+$solution->unionFind();
+$solution->unionElements(0,7);
+$solution->unionElements(1,7);
+$solution->unionElements(2,7);
+$solution->unionElements(5,7);
+$solution->unionElements(6,7);
+$solution->unionElements(4,3);
+$solution->unionElements(3,8);
+$solution->unionElements(4,2);
+//$solution->printId();
+class ListNode {
+    public $val = 0;
+    public $next = null;
+    function __construct($val) { $this->val = $val; }
+}
+$node = new ListNode(1);
+$node->next = new ListNode(2);
+$node->next = new ListNode(3);
+$node->next = new ListNode(4);
+$node->next = new ListNode(5);
+$pre = null;
+$l1 = $node;
+$l1->next = null;
+$l1 = null;
+print_r($node);
 //存储方式
 
 //线性表：顺序表、链表、栈、队列
