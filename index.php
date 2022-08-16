@@ -383,6 +383,33 @@ class Solution {
     {
         print_r($this->id);
     }
+
+    /**
+     * 约瑟夫环解法
+     * @param $n
+     * @param $m
+     * @return int
+     */
+    function f($n,$m)
+    {
+        $dp = 1;
+        for ($i=2;$i<=$n;$i++){
+            $dp = ($dp+$m-1)%$n+1;
+        }
+        return $dp;
+    }
+    function pow($m,$n)
+    {
+        $sum = 1;
+        while($n>0){
+            if($n & 1 == 1){
+                $sum *=$m;
+            }
+            $m *=$m;
+            $n = $n>>1;
+        }
+        return $sum;
+    }
 }
 $solution = new Solution();
 $arr = [
@@ -415,7 +442,13 @@ $pre = null;
 $l1 = $node;
 $l1->next = null;
 $l1 = null;
-print_r($node);
+$x = 1;
+$y = 2;
+$x = $x^$y;
+$y = $x^$y;
+$x = $x^$y;
+echo $x.":".$y;
+print_r($solution->pow(5,3));
 //存储方式
 
 //线性表：顺序表、链表、栈、队列
